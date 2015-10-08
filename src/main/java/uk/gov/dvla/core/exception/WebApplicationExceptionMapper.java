@@ -1,12 +1,21 @@
 package uk.gov.dvla.core.exception;
 
+import uk.gov.dvla.core.error.ApplicationError;
 import uk.gov.dvla.core.error.ErrorResult;
-import uk.gov.dvla.core.error.ServiceErrors;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 
 public class WebApplicationExceptionMapper implements ExceptionMapper<Exception> {
+
+    /**
+     * The type of error returned for any unhandled exceptions.
+     */
+    private ApplicationError unexpectedError;
+
+    public WebApplicationExceptionMapper(ApplicationError unexpectedError) {
+        this.unexpectedError = unexpectedError;
+    }
 
     @Override
     @SuppressWarnings("unchecked")
@@ -20,7 +29,7 @@ public class WebApplicationExceptionMapper implements ExceptionMapper<Exception>
         } else {
             return Response
                     .status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(new ErrorResult(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), ServiceErrors.SERVICE_ERROR))
+                    .entity(new ErrorResult(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), unexpectedError))
                     .build();
         }
     }

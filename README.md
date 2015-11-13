@@ -1,9 +1,7 @@
 Core
-================
+====
 
-Module provides core elements used by Online Enforcement Penalty Payments project, eg:
-
- * validation constrains (http://beanvalidation.org/1.1/spec)
+Module provides core elements used by Online Enforcement Penalty Payments project.
 
 ## Requirements
 

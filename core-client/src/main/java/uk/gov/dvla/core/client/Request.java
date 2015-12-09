@@ -4,6 +4,7 @@ import jersey.repackaged.com.google.common.collect.ImmutableMap;
 import jersey.repackaged.com.google.common.collect.Maps;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class Request<P> {
 
@@ -45,5 +46,19 @@ public class Request<P> {
         public Request<P> create() {
             return new Request<>(payload, ImmutableMap.copyOf(headers));
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Request<?> request = (Request<?>) o;
+        return Objects.equals(payload, request.payload) &&
+                Objects.equals(headers, request.headers);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(payload, headers);
     }
 }

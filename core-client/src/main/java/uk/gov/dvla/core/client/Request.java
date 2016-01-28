@@ -61,4 +61,12 @@ public class Request<P> {
     public int hashCode() {
         return Objects.hash(payload, headers);
     }
+
+    @Override
+    public String toString() {
+        return com.google.common.base.MoreObjects.toStringHelper(this)
+                .add("payload", payload)
+                .add("headers", headers)
+                .toString();
+    }
 }

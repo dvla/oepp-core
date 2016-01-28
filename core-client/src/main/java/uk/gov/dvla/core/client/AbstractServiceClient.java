@@ -2,6 +2,7 @@ package uk.gov.dvla.core.client;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.rmi.runtime.Log;
 import uk.gov.dvla.core.exception.RequestProcessingException;
 import uk.gov.dvla.core.exception.UnexpectedResponseException;
 
@@ -34,13 +35,17 @@ public abstract class AbstractServiceClient {
             return Optional.of(callServerForMandatoryResource(serverCommand, request));
         } catch (UnexpectedResponseException ex) {
             if (ex.getResponseStatus() == 404) {
+                logger.warn("404 Response returned for request {}", request);
                 return Optional.empty();
             }
+
+            logger.error("Unexpected response returned for request {}", request);
             throw ex;
         }
     }
 
     protected <Req, Res> Res callServerForMandatoryResource(ServerCommand<Req, Res> serverCommand, Req request) {
+        logger.debug("Received request: {}", request);
         try {
             return serverCommand.makeServerCall(request);
         } catch (WebApplicationException ex) {

@@ -51,10 +51,10 @@ public abstract class AbstractServiceClient {
             return response;
         } catch (WebApplicationException ex) {
             Response errorResponse = ex.getResponse();
-            logger.error("Underlying service returned " + errorResponse.getStatus() + " response for request: " + request, ex);
+            logger.error("Underlying service returned {} response for request: {}", errorResponse.getStatus(), request, ex);
             throw new UnexpectedResponseException(errorResponse.getStatus(), errorResponse.readEntity(String.class), ex);
         } catch (Exception ex) {
-            logger.error("Unexpected error occurred while calling underlying service for request: " + request, ex);
+            logger.error("Unexpected error occurred while calling underlying service for request: {}", request, ex);
             throw new RequestProcessingException(ex);
         }
     }

@@ -38,7 +38,7 @@ public abstract class AbstractServiceClient {
                 return Optional.empty();
             }
 
-            logger.error("Unexpected response returned for request {}", request);
+            logger.error("Unexpected response ({}) returned for request {}, response was: {}", ex.getResponseStatus(), request, ex.getResponseBody());
             throw ex;
         }
     }
@@ -51,7 +51,7 @@ public abstract class AbstractServiceClient {
             return response;
         } catch (WebApplicationException ex) {
             Response errorResponse = ex.getResponse();
-            logger.error("Underlying service returned {} response for request: {}", errorResponse.getStatus(), request, ex);
+            logger.error("Underlying service returned {} response for request: {}, response was {}", errorResponse.getStatus(), request, errorResponse, ex);
             throw new UnexpectedResponseException(errorResponse.getStatus(), errorResponse.readEntity(String.class), ex);
         } catch (Exception ex) {
             logger.error("Unexpected error occurred while calling underlying service for request: {}", request, ex);

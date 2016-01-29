@@ -34,10 +34,10 @@ public abstract class AbstractServiceClient {
             return Optional.of(callServerForMandatoryResource(serverCommand, request));
         } catch (UnexpectedResponseException ex) {
             if (ex.getResponseStatus() == 404) {
-                logger.warn("404 Response returned for request {}", request);
+                logger.warn("404 Response returned for request {}. Response was {}", request, ex.getResponseBody());
                 return Optional.empty();
             }
-            
+
             throw ex;
         }
     }

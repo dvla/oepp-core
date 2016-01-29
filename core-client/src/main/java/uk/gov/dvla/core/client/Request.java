@@ -3,6 +3,8 @@ package uk.gov.dvla.core.client;
 import jersey.repackaged.com.google.common.collect.ImmutableMap;
 import jersey.repackaged.com.google.common.collect.Maps;
 
+import com.google.common.base.MoreObjects;
+
 import java.util.Map;
 import java.util.Objects;
 
@@ -64,7 +66,7 @@ public class Request<P> {
 
     @Override
     public String toString() {
-        return com.google.common.base.MoreObjects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("payload", payload)
                 .add("headers", headers)
                 .toString();

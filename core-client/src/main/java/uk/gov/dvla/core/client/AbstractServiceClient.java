@@ -37,14 +37,13 @@ public abstract class AbstractServiceClient {
                 logger.warn("404 Response returned for request {}", request);
                 return Optional.empty();
             }
-
-            logger.error("Unexpected response ({}) returned for request {}, response was: {}", ex.getResponseStatus(), request, ex.getResponseBody());
+            
             throw ex;
         }
     }
 
     protected <Req, Res> Res callServerForMandatoryResource(ServerCommand<Req, Res> serverCommand, Req request) {
-        logger.debug("Received request: {}", request);
+        logger.debug("Sending request: {}", request);
         try {
             Res response = serverCommand.makeServerCall(request);
             logger.debug("Received response: {}", response);

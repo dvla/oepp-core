@@ -34,6 +34,7 @@ public abstract class AbstractServiceClient {
             return Optional.of(callServerForMandatoryResource(serverCommand, request));
         } catch (UnexpectedResponseException ex) {
             if (ex.getResponseStatus() == 404) {
+                logger.warn("Received 404 response for request {}, response body was {}", request, ex.getResponseBody());
                 return Optional.empty();
             }
             throw ex;
@@ -42,13 +43,16 @@ public abstract class AbstractServiceClient {
 
     protected <Req, Res> Res callServerForMandatoryResource(ServerCommand<Req, Res> serverCommand, Req request) {
         try {
-            return serverCommand.makeServerCall(request);
+            Res response = serverCommand.makeServerCall(request);
+            logger.debug("Received successful response {}, for request {}", response, request);
+            return response;
         } catch (WebApplicationException ex) {
             Response errorResponse = ex.getResponse();
-            logger.error("Underlying service returned " + errorResponse.getStatus() + " response for request: " + request, ex);
-            throw new UnexpectedResponseException(errorResponse.getStatus(), errorResponse.readEntity(String.class), ex);
+            String responseBody = errorResponse.readEntity(String.class);
+            logger.error("Received {} response for request {}, response body was {}", errorResponse.getStatus(), request, responseBody, ex);
+            throw new UnexpectedResponseException(errorResponse.getStatus(), responseBody, ex);
         } catch (Exception ex) {
-            logger.error("Unexpected error occurred while calling underlying service for request: " + request, ex);
+            logger.error("Unexpected error occurred while calling underlying service for request: {}", request, ex);
             throw new RequestProcessingException(ex);
         }
     }

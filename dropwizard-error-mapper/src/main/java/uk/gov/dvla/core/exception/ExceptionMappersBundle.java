@@ -53,7 +53,7 @@ public class ExceptionMappersBundle<T extends Configuration> implements Configur
         ServerFactory serverFactory = configuration.getServerFactory();
         if (serverFactory instanceof DefaultServerFactory) {
             ((DefaultServerFactory) serverFactory).setRegisterDefaultExceptionMappers(false);
-            logger.debug("Default exceptions mappers has been disabled - custom ones will be installed instead");
+            logger.info("Default exceptions mappers has been disabled - custom ones will be installed instead");
         }
 
         environment.jersey().register(new WebApplicationExceptionMapper(applicationError));

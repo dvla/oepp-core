@@ -4,13 +4,15 @@ import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.jersey.errors.EarlyEofExceptionMapper;
 import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
+import io.dropwizard.server.DefaultServerFactory;
+import io.dropwizard.server.ServerFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import uk.gov.dvla.core.error.ApplicationError;
 
 /**
- * This bundle registers our exception mappers assuming that the defaults have been disabled using
- * "registerDefaultExceptionMappers: false" in the yaml config file
+ * This bundle registers our exception mappers, it disables the default dropwizard exception mappers if your
+ * configuration is using the DefaultServerFactory implementation.
  *
  * It registers the following custom exception mappers:
  * WebApplicationExceptionMapper
@@ -38,6 +40,11 @@ public class CustomExceptionBundle<T extends Configuration> implements Configure
 
     @Override
     public void run(T configuration, Environment environment) throws Exception {
+        ServerFactory serverFactory = configuration.getServerFactory();
+        if (serverFactory instanceof DefaultServerFactory) {
+            ((DefaultServerFactory) serverFactory).setRegisterDefaultExceptionMappers(false);
+        }
+
         environment.jersey().register(new WebApplicationExceptionMapper(applicationError));
         environment.jersey().register(new ValidationViolationExceptionMapper());
         environment.jersey().register(new EarlyEofExceptionMapper());

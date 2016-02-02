@@ -24,7 +24,6 @@ public class WebApplicationExceptionMapper implements ExceptionMapper<Exception>
     @Override
     @SuppressWarnings("unchecked")
     public Response toResponse(Exception exception) {
-        logger.error("Unexpected error has been handled", exception);
         if (exception instanceof WebApplicationException) {
             WebApplicationException webApplicationException = (WebApplicationException) exception;
             return Response
@@ -32,6 +31,7 @@ public class WebApplicationExceptionMapper implements ExceptionMapper<Exception>
                     .entity(new ErrorResult(webApplicationException.getStatus(), webApplicationException.getError()))
                     .build();
         } else {
+            logger.error("Unexpected error has been handled", exception);
             return Response
                     .status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(new ErrorResult(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), unexpectedError))

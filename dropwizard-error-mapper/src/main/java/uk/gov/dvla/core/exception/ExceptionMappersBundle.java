@@ -8,30 +8,40 @@ import io.dropwizard.server.DefaultServerFactory;
 import io.dropwizard.server.ServerFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.gov.dvla.core.error.ApplicationError;
 
 /**
  * This bundle registers our exception mappers, it disables the default dropwizard exception mappers if your
  * configuration is using the DefaultServerFactory implementation.
- *
+ * <p>
  * It registers the following custom exception mappers:
- * WebApplicationExceptionMapper
- * ValidationViolationExceptionMapper
- *
+ * <ul>
+ *   <li>{@link WebApplicationExceptionMapper}</li>
+ *   <li>{@link ValidationViolationExceptionMapper}</li>
+ * </ul>
+ * <p>
  * And the standard dropwizard exception mappers:
- * EarlyEofExceptionMapper
- * JsonProcessingExceptionMapper
+ * <ul>
+ *   <li>{@link EarlyEofExceptionMapper}</li>
+ *   <li>{@link JsonProcessingExceptionMapper}</li>
+ * </ul>
+ *
  * @param <T>
  */
-public class CustomExceptionBundle<T extends Configuration> implements ConfiguredBundle<T> {
+public class ExceptionMappersBundle<T extends Configuration> implements ConfiguredBundle<T> {
+
+    private static final Logger logger = LoggerFactory.getLogger(ExceptionMappersBundle.class);
 
     private final ApplicationError applicationError;
 
     /**
      * @param applicationError The service specific general application error to be returned by the
-     *                         WebApplicationExceptionMapper when the exception caught is not a WebApplicationException
+     *                         {@link WebApplicationExceptionMapper} when the exception caught is
+     *                         not a {@link WebApplicationException}
      */
-    public CustomExceptionBundle(ApplicationError applicationError) {
+    public ExceptionMappersBundle(ApplicationError applicationError) {
         this.applicationError = applicationError;
     }
 
@@ -43,6 +53,7 @@ public class CustomExceptionBundle<T extends Configuration> implements Configure
         ServerFactory serverFactory = configuration.getServerFactory();
         if (serverFactory instanceof DefaultServerFactory) {
             ((DefaultServerFactory) serverFactory).setRegisterDefaultExceptionMappers(false);
+            logger.debug("Default exceptions mappers has been disabled - custom ones will be installed instead");
         }
 
         environment.jersey().register(new WebApplicationExceptionMapper(applicationError));

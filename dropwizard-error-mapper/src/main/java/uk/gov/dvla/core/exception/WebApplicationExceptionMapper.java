@@ -6,8 +6,11 @@ import uk.gov.dvla.core.error.ApplicationError;
 import uk.gov.dvla.core.error.ErrorResult;
 
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status.Family;
 import javax.ws.rs.ext.ExceptionMapper;
 import java.util.concurrent.ThreadLocalRandom;
+
+import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 
 public class WebApplicationExceptionMapper implements ExceptionMapper<Exception> {
 
@@ -25,21 +28,31 @@ public class WebApplicationExceptionMapper implements ExceptionMapper<Exception>
     @Override
     @SuppressWarnings("unchecked")
     public Response toResponse(Exception exception) {
-        String logID = String.format("%016x", ThreadLocalRandom.current().nextLong());
+        int responseStatus;
+        ApplicationError applicationError;
+        String incidentID;
 
         if (exception instanceof WebApplicationException) {
             WebApplicationException webApplicationException = (WebApplicationException) exception;
-            return Response
-                    .status(webApplicationException.getStatus())
-                    .entity(new ErrorResult(webApplicationException.getStatus(), webApplicationException.getError(), logID))
-                    .build();
+
+            responseStatus = webApplicationException.getStatus();
+            applicationError = webApplicationException.getError();
         } else {
-            logger.error("Unexpected error has been handled (ID: {})", logID, exception);
-            return Response
-                    .status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(new ErrorResult(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), unexpectedError, logID))
-                    .build();
+            responseStatus = INTERNAL_SERVER_ERROR.getStatusCode();
+            applicationError = unexpectedError;
         }
+
+        if (Family.familyOf(responseStatus) == Family.SERVER_ERROR) {
+            incidentID = String.format("%016x", ThreadLocalRandom.current().nextLong());
+            logger.error("Unexpected error has been handled (incident ID: {})", incidentID, exception);
+        } else {
+            incidentID = null;
+        }
+
+        return Response
+                .status(responseStatus)
+                .entity(new ErrorResult(responseStatus, applicationError, incidentID))
+                .build();
     }
 
 }

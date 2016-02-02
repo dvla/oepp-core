@@ -8,16 +8,16 @@ import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.Response;
 
 /**
- * A ConstraintViolationExceptionMapper which logs when the Constraints (annotations) are violated before
- * handling it in the same way as the ConstraintViolationExceptionMapper would
+ * A {@link ConstraintViolationException} mapper which logs validation constraints violations before
+ * handling it in the same way as the {@link ConstraintViolationExceptionMapper} would
  */
 public class ValidationViolationExceptionMapper extends ConstraintViolationExceptionMapper {
 
-    private static final Logger logger = LoggerFactory.getLogger(ConstraintViolationException.class);
+    private static final Logger logger = LoggerFactory.getLogger(ValidationViolationExceptionMapper.class);
 
     @Override
     public Response toResponse(ConstraintViolationException exception) {
-        logger.debug("The following validation constraints were violated: {}", exception.getConstraintViolations());
+        logger.warn("The following validation constraints were violated: {}", exception.getConstraintViolations());
         return super.toResponse(exception);
     }
 }

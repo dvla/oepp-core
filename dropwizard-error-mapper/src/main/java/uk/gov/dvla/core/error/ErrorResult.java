@@ -1,6 +1,8 @@
 package uk.gov.dvla.core.error;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -13,17 +15,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class ErrorResult<T extends ApplicationError> {
 
-    private int status;
-    private T error;
-    private String id;
+    private final int status;
+    private final T error;
+    @JsonInclude(Include.NON_NULL)
+    private final String incidentID;
 
     @JsonCreator
     public ErrorResult(@JsonProperty("status") int status,
                        @JsonProperty("error") T error,
-                       @JsonProperty("ID") String id) {
+                       @JsonProperty("incidentID") String incidentID) {
+        this.incidentID = incidentID;
         this.status = status;
         this.error = error;
-        this.id = id;
     }
 
     /**
@@ -43,10 +46,10 @@ public class ErrorResult<T extends ApplicationError> {
     }
 
     /**
-     * Returns an ID which matches the message that the error is linked to in the logs
+     * Returns an incident ID which matches the message that the error is linked to in the logs
      * @return unique error response ID
      */
-    public String getId() {
-        return id;
+    public String getIncidentID() {
+        return incidentID;
     }
 }

@@ -17,6 +17,7 @@
 
     <modules>
         <module>core-client</module>
+        <module>core-error-mapper</module>
         <module>dropwizard-error-mapper</module>
     </modules>
 

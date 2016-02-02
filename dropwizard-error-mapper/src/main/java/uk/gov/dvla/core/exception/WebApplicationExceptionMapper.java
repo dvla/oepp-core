@@ -7,6 +7,7 @@ import uk.gov.dvla.core.error.ErrorResult;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class WebApplicationExceptionMapper implements ExceptionMapper<Exception> {
 
@@ -24,17 +25,19 @@ public class WebApplicationExceptionMapper implements ExceptionMapper<Exception>
     @Override
     @SuppressWarnings("unchecked")
     public Response toResponse(Exception exception) {
-        logger.error("Unexpected error has been handled", exception);
+        String logID = String.format("%016x", ThreadLocalRandom.current().nextLong());
+
         if (exception instanceof WebApplicationException) {
             WebApplicationException webApplicationException = (WebApplicationException) exception;
             return Response
                     .status(webApplicationException.getStatus())
-                    .entity(new ErrorResult(webApplicationException.getStatus(), webApplicationException.getError()))
+                    .entity(new ErrorResult(webApplicationException.getStatus(), webApplicationException.getError(), logID))
                     .build();
         } else {
+            logger.error("Unexpected error has been handled (ID: {})", logID, exception);
             return Response
                     .status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(new ErrorResult(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), unexpectedError))
+                    .entity(new ErrorResult(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), unexpectedError, logID))
                     .build();
         }
     }

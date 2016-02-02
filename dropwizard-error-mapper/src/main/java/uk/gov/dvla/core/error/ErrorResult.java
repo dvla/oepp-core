@@ -15,12 +15,15 @@ public class ErrorResult<T extends ApplicationError> {
 
     private int status;
     private T error;
+    private String id;
 
     @JsonCreator
     public ErrorResult(@JsonProperty("status") int status,
-                       @JsonProperty("error") T error) {
+                       @JsonProperty("error") T error,
+                       @JsonProperty("ID") String id) {
         this.status = status;
         this.error = error;
+        this.id = id;
     }
 
     /**
@@ -37,5 +40,13 @@ public class ErrorResult<T extends ApplicationError> {
      */
     public T getError() {
         return error;
+    }
+
+    /**
+     * Returns an ID which matches the message that the error is linked to in the logs
+     * @return unique error response ID
+     */
+    public String getId() {
+        return id;
     }
 }

@@ -8,12 +8,12 @@
     <parent>
         <groupId>uk.gov.dvla.oep</groupId>
         <artifactId>project-parent</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0.0</version>
         <relativePath />
     </parent>
 
     <artifactId>core</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
 
     <modules>
         <module>core-client</module>

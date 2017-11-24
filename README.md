@@ -1,17 +1,19 @@
-Core
-====
-
+# oepp-core
 Module provides core elements used by Online Enforcement Penalty Payments project.
 
-## Requirements
-
+## Pre-requisites
  * Java JDK 1.8+
  * Maven 3
 
-## How to build it
-
+## Component Installation Instructions
 To build this project execute the following command:
 
-```bash
   mvn clean install
-```
+
+##Deployment Instructions
+None
+
+##Component Version
+Beta
+
+
